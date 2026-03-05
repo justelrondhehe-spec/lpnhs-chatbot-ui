@@ -30,7 +30,7 @@ async function sendMessage() {
 
     try {
         // NOTE: This URL is a placeholder until we reach Step 5!
-        const response = await fetch('YOUR_VERCEL_BACKEND_URL_HERE', {
+        const response = await fetch('https://gemini-proxy-xi-lyart.vercel.app/api/chatbot', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: text })
