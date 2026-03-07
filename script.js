@@ -26,6 +26,16 @@ const typingIndicator = document.getElementById('typing-indicator'); // Animated
 const clearBtn       = document.getElementById('clearBtn');         // Clear button
 
 /* =====================================================
+   CONVERSATION HISTORY
+   Stores every exchange as { role, text } objects so
+   the backend receives full context with every request.
+   This gives the bot its "memory" within a session.
+     role: 'user'  — a message the user sent
+     role: 'model' — a reply the bot gave
+   ===================================================== */
+let conversationHistory = [];
+
+/* =====================================================
    UTILITIES
    ===================================================== */
 
@@ -145,6 +155,11 @@ async function sendMessage() {
   appendMessage(text, 'user');
   userInput.value = '';
 
+  /* -- Save user turn to history BEFORE sending --
+     The backend receives this history with the current message
+     so Gemini can read the full conversation context.        */
+  conversationHistory.push({ role: 'user', text });
+
   /* -- Lock input while waiting for response -- */
   userInput.disabled = true;
 
@@ -152,18 +167,24 @@ async function sendMessage() {
   showTyping();
 
   try {
-    /* Your original fetch — URL and body shape kept exactly as-is */
     const response = await fetch('https://gemini-proxy-xi-lyart.vercel.app/api/chatbot', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: text })
+      body: JSON.stringify({
+        message: text,
+        // Send all previous turns (excluding the current one, which is 'message')
+        // so the bot understands the full conversation context.
+        history: conversationHistory.slice(0, -1)
+      })
     });
 
-    /* Parse JSON — your original response key: data.reply */
     const data = await response.json();
 
     hideTyping();
     appendMessage(data.reply, 'ai');
+
+    /* -- Save bot reply to history so future messages include it -- */
+    conversationHistory.push({ role: 'model', text: data.reply });
 
   } catch (error) {
     /* Show a friendly error if the backend is unreachable */
@@ -206,6 +227,10 @@ clearBtn.addEventListener('click', () => {
   if (!confirmed) return;
 
   chatBox.innerHTML = '';
+
+  /* Reset conversation history so the bot starts completely fresh */
+  conversationHistory = [];
+
   initWelcome();
   userInput.focus();
 });
