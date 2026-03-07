@@ -111,14 +111,18 @@ input  { font-family: inherit; font-size: inherit; border: none; outline: none; 
 }
 
 .crest {
-  width: 84px;
-  height: 84px;
-  filter: drop-shadow(0 4px 12px rgba(255, 215, 0, 0.4));
-  transition: transform 0.22s ease, filter 0.22s ease;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;               /* Circular crop matches the round logo */
+  object-fit: cover;                /* Fills the circle cleanly */
+  border: 2px solid var(--gold);    /* Thin gold ring to frame it */
+  box-shadow: 0 4px 16px rgba(255, 215, 0, 0.35), 0 0 0 4px rgba(255,215,0,0.10);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  display: block;
 }
 .crest:hover {
-  transform: scale(1.06) rotate(-2deg);
-  filter: drop-shadow(0 6px 18px rgba(255, 215, 0, 0.6));
+  transform: scale(1.07) rotate(-2deg);
+  box-shadow: 0 6px 22px rgba(255, 215, 0, 0.55), 0 0 0 6px rgba(255,215,0,0.18);
 }
 
 .sidebar__school-name {
@@ -481,7 +485,7 @@ input  { font-family: inherit; font-size: inherit; border: none; outline: none; 
     gap: 10px;
   }
 
-  .crest { width: 42px; height: 42px; }
+  .crest { width: 44px; height: 44px; }
   .sidebar__school-name { font-size: 0.82rem; }
   .sidebar__school-tag  { font-size: 0.6rem; }
 
