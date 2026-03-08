@@ -24,7 +24,7 @@ const chatBox        = document.getElementById('chat-box');         // Message f
 const userInput      = document.getElementById('user-input');       // Text input
 const typingIndicator = document.getElementById('typing-indicator'); // Animated dots
 const clearBtn       = document.getElementById('clearBtn');         // Clear button
-const sendBtn        = document.getElementById('sendBtn') || document.querySelector('.input-area__row button'); // Send button
+const sendBtn        = document.getElementById('sendBtn');         // Send button
 
 /* =====================================================
    CONVERSATION HISTORY
