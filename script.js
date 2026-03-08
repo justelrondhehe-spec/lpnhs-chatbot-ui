@@ -302,7 +302,7 @@ function showCountdown(seconds) {
 
       /* Replace countdown bubble with a ready message */
       bubble.style.cssText = 'background:#e8f5e9; border:1px solid #a5d6a7; color:#2e7d32;';
-      bubble.innerHTML = '✅ You're good to go! You can send messages again.';
+      bubble.innerHTML = "✅ You're good to go! You can send messages again.";
 
       /* Re-enable the input */
       setInputLocked(false);
