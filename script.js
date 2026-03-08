@@ -23,8 +23,10 @@
 const chatBox        = document.getElementById('chat-box');         // Message feed
 const userInput      = document.getElementById('user-input');       // Text input
 const typingIndicator = document.getElementById('typing-indicator'); // Animated dots
-const clearBtn       = document.getElementById('clearBtn');         // Clear button
-const sendBtn        = document.getElementById('sendBtn');         // Send button
+const clearBtn        = document.getElementById('clearBtn');         // Clear button
+const sendBtn         = document.getElementById('sendBtn');          // Send button
+const darkModeBtn     = document.getElementById('darkModeBtn');      // Dark mode toggle
+const quickReplies    = document.getElementById('quick-replies');    // Quick reply strip
 
 /* =====================================================
    CONVERSATION HISTORY
@@ -155,6 +157,9 @@ async function sendMessage() {
   /* -- Render user bubble immediately -- */
   appendMessage(text, 'user');
   userInput.value = '';
+
+  /* -- Hide quick reply chips after first message -- */
+  if (quickReplies) { quickReplies.style.display = 'none'; }
 
   /* -- Save user turn to history BEFORE sending --
      The backend receives this history with the current message
@@ -313,6 +318,42 @@ function setInputLocked(isLocked) {
   sendBtn.disabled   = isLocked;
   userInput.disabled = isLocked;
 }
+
+/* =====================================================
+   DARK MODE TOGGLE
+   Saves preference to localStorage so it persists
+   across page refreshes.
+   ===================================================== */
+
+// Restore saved preference on load
+if (localStorage.getItem('lpnhs-dark') === 'true') {
+  document.body.classList.add('dark-mode');
+  darkModeBtn.querySelector('.dm-icon').textContent  = '☀️';
+  darkModeBtn.querySelector('.dm-label').textContent = 'Light Mode';
+}
+
+darkModeBtn.addEventListener('click', function() {
+  var isDark = document.body.classList.toggle('dark-mode');
+  darkModeBtn.querySelector('.dm-icon').textContent  = isDark ? '☀️' : '🌙';
+  darkModeBtn.querySelector('.dm-label').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+  localStorage.setItem('lpnhs-dark', isDark);
+});
+
+/* =====================================================
+   QUICK REPLY BUTTONS
+   Clicking a chip fills the input and sends it.
+   The whole strip hides after first use.
+   ===================================================== */
+
+quickReplies.querySelectorAll('.quick-reply-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    // Strip the emoji prefix from the label to get clean question text
+    var label = btn.textContent.trim().replace(/^[\p{Emoji}\s]+/u, '').trim();
+    userInput.value = label;
+    quickReplies.style.display = 'none';   // hide chips after first pick
+    sendMessage();
+  });
+});
 
 /* Run on page load */
 initWelcome();

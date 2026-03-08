@@ -387,6 +387,136 @@ input  { font-family: inherit; font-size: inherit; border: none; outline: none; 
 [hidden] { display: none !important; }
 
 /* ------------------------------------------------
+   DARK MODE
+   Applied when <body> has class "dark-mode".
+   Overrides CSS variables so every component
+   automatically adapts — no per-element overrides.
+------------------------------------------------ */
+body.dark-mode {
+  --ivory:        #121212;
+  --ivory-dark:   #1e1e1e;
+  --white:        #1e1e1e;
+  --text-dark:    #f0f0f0;
+  --text-mid:     #b0b8c8;
+  --text-light:   #7a8494;
+  --green:        #00a86b;
+  --green-dark:   #00c47e;
+  --green-mid:    #008055;
+  --shadow-soft:  0 4px 20px rgba(0,0,0,0.40);
+  --shadow-med:   0 8px 32px rgba(0,0,0,0.55);
+  background-color: var(--ivory);
+  color: var(--text-dark);
+}
+
+/* Sidebar stays green but slightly darker in dark mode */
+body.dark-mode .sidebar {
+  background: linear-gradient(175deg, #003d2d 0%, #002419 100%);
+}
+
+/* Chat header */
+body.dark-mode .chat-header {
+  background: #1a1a1a;
+  border-bottom-color: #2e2e2e;
+}
+
+/* AI message bubbles */
+body.dark-mode .ai-message {
+  background: #2a2a2a;
+  border-color: #3a3a3a;
+  color: var(--text-dark);
+}
+
+/* Input area */
+body.dark-mode .input-area {
+  background: #1a1a1a;
+  border-top-color: #2e2e2e;
+}
+
+body.dark-mode .input-area__row {
+  background: #2a2a2a;
+}
+
+body.dark-mode #user-input {
+  color: var(--text-dark);
+}
+
+/* Dark mode toggle button */
+.dark-mode-btn {
+  background: none;
+  border: 1.5px solid rgba(255,215,0,0.4);
+  border-radius: var(--radius-pill);
+  color: var(--gold);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s, border-color 0.2s;
+  margin-top: 10px;
+  align-self: center;
+}
+
+.dark-mode-btn:hover {
+  background: rgba(255,215,0,0.10);
+  border-color: var(--gold);
+}
+
+.dark-mode-btn .dm-icon { font-size: 1rem; }
+
+/* ------------------------------------------------
+   QUICK REPLY BUTTONS
+   Suggested question chips shown above the input.
+   Hidden after the user sends their first message.
+------------------------------------------------ */
+.quick-replies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 18px 2px;
+  background: var(--white);
+  border-top: 1px solid var(--ivory-dark);
+}
+
+.quick-reply-btn {
+  background: var(--ivory-dark);
+  border: 1.5px solid #d0d5dd;
+  border-radius: var(--radius-pill);
+  color: var(--text-mid);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.15s;
+  white-space: nowrap;
+}
+
+.quick-reply-btn:hover {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+body.dark-mode .quick-replies {
+  background: #1a1a1a;
+  border-top-color: #2e2e2e;
+}
+
+body.dark-mode .quick-reply-btn {
+  background: #2a2a2a;
+  border-color: #3a3a3a;
+  color: var(--text-mid);
+}
+
+body.dark-mode .quick-reply-btn:hover {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+/* ------------------------------------------------
    9. INPUT AREA
    Preserves your original .input-area class.
 ------------------------------------------------ */
