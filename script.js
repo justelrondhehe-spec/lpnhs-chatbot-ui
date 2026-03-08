@@ -274,37 +274,30 @@ function initWelcome() {
  * @param {number} seconds - Seconds remaining until reset.
  */
 function showCountdown(seconds) {
-  /* Lock the input so the user can't send while cooling down */
   setInputLocked(true);
 
-  /* Create a dedicated message bubble for the countdown */
-  const wrapper = document.createElement('div');
-  wrapper.style.cssText = 'display:flex; flex-direction:column; align-items:flex-start;';
+  const wrapper = document.createElement("div");
+  wrapper.style.cssText = "display:flex; flex-direction:column; align-items:flex-start;";
 
-  const bubble = document.createElement('div');
-  bubble.classList.add('message', 'ai-message');
-  bubble.style.cssText = 'background:#fff8e1; border:1px solid #ffe082; color:#5d4037;';
-  bubble.innerHTML = `⏳ You've sent 5 messages this minute. Please wait <strong id="countdown-timer">${seconds}</strong>s before sending again.`;
+  const bubble = document.createElement("div");
+  bubble.classList.add("message", "ai-message");
+  bubble.style.cssText = "background:#fff8e1; border:1px solid #ffe082; color:#5d4037;";
+  bubble.innerHTML = "⏳ You have sent 5 messages this minute. Please wait <strong id=\"countdown-timer\">" + seconds + "</strong>s before sending again.";
 
   wrapper.appendChild(bubble);
   chatBox.appendChild(wrapper);
   scrollToBottom();
 
-  /* Tick down every second and update the display */
   let remaining = seconds;
-  const interval = setInterval(() => {
+  const interval = setInterval(function() {
     remaining--;
-    const timerEl = document.getElementById('countdown-timer');
-    if (timerEl) timerEl.textContent = remaining;
+    var timerEl = document.getElementById("countdown-timer");
+    if (timerEl) { timerEl.textContent = remaining; }
 
     if (remaining <= 0) {
       clearInterval(interval);
-
-      /* Replace countdown bubble with a ready message */
-      bubble.style.cssText = 'background:#e8f5e9; border:1px solid #a5d6a7; color:#2e7d32;';
-      bubble.innerHTML = "✅ You're good to go! You can send messages again.";
-
-      /* Re-enable the input */
+      bubble.style.cssText = "background:#e8f5e9; border:1px solid #a5d6a7; color:#2e7d32;";
+      bubble.textContent = "✅ You are good to go! You can send messages again.";
       setInputLocked(false);
       userInput.focus();
       scrollToBottom();
