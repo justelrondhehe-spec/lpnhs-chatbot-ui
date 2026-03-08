@@ -24,6 +24,7 @@ const chatBox        = document.getElementById('chat-box');         // Message f
 const userInput      = document.getElementById('user-input');       // Text input
 const typingIndicator = document.getElementById('typing-indicator'); // Animated dots
 const clearBtn       = document.getElementById('clearBtn');         // Clear button
+const sendBtn        = document.getElementById('sendBtn') || document.querySelector('.input-area__row button'); // Send button
 
 /* =====================================================
    CONVERSATION HISTORY
@@ -181,6 +182,15 @@ async function sendMessage() {
     const data = await response.json();
 
     hideTyping();
+
+    /* -- Handle per-user rate limit response from backend -- */
+    if (data.rateLimited) {
+      showCountdown(data.secondsLeft);
+      // Remove the user's message from history since it wasn't processed
+      conversationHistory.pop();
+      return;
+    }
+
     appendMessage(data.reply, 'ai');
 
     /* -- Save bot reply to history so future messages include it -- */
@@ -248,6 +258,67 @@ function initWelcome() {
     'Hello! I am the LPNHS Main chatbot. How can I help you today?',
     'ai'
   );
+}
+
+/* =====================================================
+   COUNTDOWN TIMER
+   Shown when the user hits the 5 messages/minute limit.
+   Displays a live ticking countdown in the chat feed,
+   then re-enables the input once the cooldown is over.
+   ===================================================== */
+
+/**
+ * Shows a countdown bubble in the chat and locks the input
+ * until the cooldown period expires.
+ *
+ * @param {number} seconds - Seconds remaining until reset.
+ */
+function showCountdown(seconds) {
+  /* Lock the input so the user can't send while cooling down */
+  setInputLocked(true);
+
+  /* Create a dedicated message bubble for the countdown */
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = 'display:flex; flex-direction:column; align-items:flex-start;';
+
+  const bubble = document.createElement('div');
+  bubble.classList.add('message', 'ai-message');
+  bubble.style.cssText = 'background:#fff8e1; border:1px solid #ffe082; color:#5d4037;';
+  bubble.innerHTML = `⏳ You've sent 5 messages this minute. Please wait <strong id="countdown-timer">${seconds}</strong>s before sending again.`;
+
+  wrapper.appendChild(bubble);
+  chatBox.appendChild(wrapper);
+  scrollToBottom();
+
+  /* Tick down every second and update the display */
+  let remaining = seconds;
+  const interval = setInterval(() => {
+    remaining--;
+    const timerEl = document.getElementById('countdown-timer');
+    if (timerEl) timerEl.textContent = remaining;
+
+    if (remaining <= 0) {
+      clearInterval(interval);
+
+      /* Replace countdown bubble with a ready message */
+      bubble.style.cssText = 'background:#e8f5e9; border:1px solid #a5d6a7; color:#2e7d32;';
+      bubble.innerHTML = '✅ You're good to go! You can send messages again.';
+
+      /* Re-enable the input */
+      setInputLocked(false);
+      userInput.focus();
+      scrollToBottom();
+    }
+  }, 1000);
+}
+
+/**
+ * Locks or unlocks the send button and textarea.
+ * @param {boolean} isLocked
+ */
+function setInputLocked(isLocked) {
+  sendBtn.disabled   = isLocked;
+  userInput.disabled = isLocked;
 }
 
 /* Run on page load */
