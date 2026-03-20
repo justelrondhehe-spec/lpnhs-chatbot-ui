@@ -85,6 +85,11 @@
               <p class="chat-header__subtitle">Ask me anything about Las Piñas National High School!</p>
             </div>
           </div>
+          <!-- Language toggle -->
+          <button class="lang-btn" id="langBtn" title="Toggle language">
+            <span class="lang-icon">🌐</span>
+            <span class="lang-label">Filipino</span>
+          </button>
           <!-- Dark mode toggle — visible on all screen sizes -->
           <button class="dark-mode-btn" id="darkModeBtn" title="Toggle dark mode">
             <span class="dm-icon">🌙</span>
@@ -163,6 +168,8 @@
       </main>
     </div><!-- /.app-wrapper -->
 
+    <!-- marked.js — lightweight Markdown renderer for AI replies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

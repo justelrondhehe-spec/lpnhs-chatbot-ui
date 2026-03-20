@@ -445,6 +445,70 @@ body.dark-mode #user-input {
 }
 
 /* Dark mode toggle button */
+/* Language toggle button — mirrors dark mode btn style */
+.lang-btn {
+  background: none;
+  border: 1.5px solid rgba(0,86,63,0.25);
+  border-radius: var(--radius-pill);
+  color: var(--text-mid);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 5px 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  flex-shrink: 0;
+}
+
+.lang-btn:hover {
+  background: rgba(0,86,63,0.08);
+  border-color: var(--green);
+  color: var(--green);
+}
+
+body.dark-mode .lang-btn {
+  border-color: rgba(255,215,0,0.35);
+  color: var(--text-mid);
+}
+
+body.dark-mode .lang-btn:hover {
+  background: rgba(255,215,0,0.10);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* ------------------------------------------------
+   MARKDOWN RENDERING
+   Styles for content rendered inside .ai-message
+   via marked.js (headings, lists, bold, code, etc.)
+------------------------------------------------ */
+.ai-message p  { margin: 0 0 8px; line-height: 1.6; }
+.ai-message p:last-child { margin-bottom: 0; }
+.ai-message ul, .ai-message ol { padding-left: 18px; margin: 4px 0 8px; }
+.ai-message li { margin-bottom: 4px; line-height: 1.55; }
+.ai-message strong { font-weight: 700; color: var(--green); }
+body.dark-mode .ai-message strong { color: var(--green-dark); }
+.ai-message em  { font-style: italic; }
+.ai-message h1, .ai-message h2, .ai-message h3 {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  color: var(--green);
+  margin: 8px 0 4px;
+}
+.ai-message code {
+  background: rgba(0,86,63,0.08);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 0.82rem;
+  font-family: monospace;
+}
+body.dark-mode .ai-message code { background: rgba(255,255,255,0.08); }
+.ai-message hr { border: none; border-top: 1px solid var(--ivory-dark); margin: 8px 0; }
+.ai-message a  { color: var(--green); text-decoration: underline; }
+body.dark-mode .ai-message a { color: var(--green-dark); }
+
 .dark-mode-btn {
   background: none;
   border: 1.5px solid rgba(0,86,63,0.25);

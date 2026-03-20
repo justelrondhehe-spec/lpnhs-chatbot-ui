@@ -27,6 +27,7 @@ const clearBtn        = document.getElementById('clearBtn');         // Clear bu
 const sendBtn         = document.getElementById('sendBtn');          // Send button
 const darkModeBtn     = document.getElementById('darkModeBtn');      // Dark mode toggle
 const quickReplies    = document.getElementById('quick-replies');    // Quick reply strip
+const langBtn         = document.getElementById('langBtn');           // Language toggle
 
 /* =====================================================
    CONVERSATION HISTORY
@@ -37,6 +38,7 @@ const quickReplies    = document.getElementById('quick-replies');    // Quick re
      role: 'model' — a reply the bot gave
    ===================================================== */
 let conversationHistory = [];
+let currentLang = localStorage.getItem('lpnhs-lang') || 'en'; // 'en' or 'fil'
 
 /* =====================================================
    UTILITIES
@@ -88,8 +90,15 @@ function appendMessage(text, sender) {
     messageDiv.classList.add('ai-message');
   }
 
-  /* Use innerText (not innerHTML) to prevent XSS from user input */
-  messageDiv.innerText = text;
+  /* User messages: plain text (XSS-safe). AI messages: render Markdown. */
+  if (sender === 'user' || sender === 'error') {
+    messageDiv.innerText = text;
+  } else {
+    // Use marked.js to render markdown; sanitize by using default safe settings
+    messageDiv.innerHTML = (typeof marked !== 'undefined')
+      ? marked.parse(text)
+      : text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
 
   /* -- Timestamp label -- */
   const timeEl = document.createElement('p');
@@ -180,7 +189,8 @@ async function sendMessage() {
         message: text,
         // Send all previous turns (excluding the current one, which is 'message')
         // so the bot understands the full conversation context.
-        history: conversationHistory.slice(0, -1)
+        history: conversationHistory.slice(0, -1),
+        lang: currentLang   // 'en' or 'fil' — tells backend which language to reply in
       })
     });
 
@@ -337,6 +347,39 @@ darkModeBtn.addEventListener('click', function() {
   darkModeBtn.querySelector('.dm-icon').textContent  = isDark ? '☀️' : '🌙';
   darkModeBtn.querySelector('.dm-label').textContent = isDark ? 'Light Mode' : 'Dark Mode';
   localStorage.setItem('lpnhs-dark', isDark);
+});
+
+/* =====================================================
+   LANGUAGE TOGGLE
+   Switches bot responses between English and Filipino.
+   Preference is saved to localStorage.
+   ===================================================== */
+
+var langLabels = {
+  en:  { btn: 'Filipino', placeholder: 'Type your message here…', welcome: 'Hello! I am the LPNHS Main chatbot. How can I help you today?' },
+  fil: { btn: 'English',  placeholder: 'I-type ang iyong mensahe dito…', welcome: 'Kamusta! Ako ang chatbot ng LPNHS Main. Paano kita matutulungan ngayon?' }
+};
+
+function applyLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('lpnhs-lang', lang);
+  var labels = langLabels[lang];
+  langBtn.querySelector('.lang-label').textContent = labels.btn;
+  userInput.placeholder = labels.placeholder;
+}
+
+// Restore saved language on load
+applyLang(currentLang);
+
+langBtn.addEventListener('click', function() {
+  var newLang = currentLang === 'en' ? 'fil' : 'en';
+  applyLang(newLang);
+  // Clear chat and show new welcome message in chosen language
+  chatBox.innerHTML = '';
+  conversationHistory = [];
+  appendMessage(langLabels[newLang === 'en' ? 'en' : 'fil'].welcome, 'ai');
+  if (quickReplies) { quickReplies.style.display = 'flex'; }
+  userInput.focus();
 });
 
 /* =====================================================
